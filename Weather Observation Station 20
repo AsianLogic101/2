@@ -1,0 +1,2 @@
+select (count(id)+1)/2 from station
+order by asc;
