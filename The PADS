@@ -1,0 +1,8 @@
+select name,occupation,
+case when occupation= 'Doctor' then replace('Doctor','Doctor','(D)')
+    when occupation= 'Professor' then replace('Professor','Professor','(P)')
+    when occupation= 'Singer' then replace('Singer','Singer','(S)')
+    when occupation= 'Actor' then replace('Actor','Actor','(A)')
+    else null end
+from occupations
+order by name asc;
