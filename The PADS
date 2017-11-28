@@ -1,8 +1,12 @@
-select name,occupation,
-case when occupation= 'Doctor' then replace('Doctor','Doctor','(D)')
-    when occupation= 'Professor' then replace('Professor','Professor','(P)')
-    when occupation= 'Singer' then replace('Singer','Singer','(S)')
-    when occupation= 'Actor' then replace('Actor','Actor','(A)')
-    else null end
+select 
+case when occupation= 'Doctor' then concat(name,'(D)')
+    when occupation= 'Professor' then concat(name,'(P)')
+    when occupation= 'Singer' then concat(name,'(S)')
+    when occupation= 'Actor' then concat(name,'(A)')
+    end
 from occupations
 order by name asc;
+select 'There are a total of ', count(occupation), concat(lower(occupation),'s.') 
+from occupations
+group by occupation
+order by count(occupation) asc, occupation asc;
