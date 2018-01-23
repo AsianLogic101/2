@@ -1,0 +1,53 @@
+select submission_date, unique_hackers, hacker_id top_id,name as top_name
+    from(select distinct submission_date
+    from submissions
+    ) dates
+    inner join (select submission_date, count(distinct hacker_id) unique_hackers
+        from submissions
+        where hacker_id in (
+        select hacker_id 
+        from (select hacker_id, min(submission_date) last_submission_date
+        from submissions s1
+        where 
+        hacker_id in (select distinct hacker_id
+            from Submissions
+            where submission_date = (select min(submission_date) 
+            from submissions))
+    and
+    not exists(select 1
+        from submissions s2
+        where s2.hacker_id = s1.hacker_id
+        and 
+        1 = datediff(s2.submission_date, s1.submission_date))
+        group by hacker_id) DailySubmitters
+        where submission_date <= last_submission_date)
+                group by submission_date
+        ) DailyUniqueSubmissions USING (submission_date)
+        inner join(
+            select submission_date, min(hacker_id) as hacker_id
+                from(select submission_date, hacker_id, total_submissions
+                    from( select submission_date, hacker_id, count(*) as total_submissions
+                                from submissions
+                                group by submission_date, hacker_id
+                        ) SubmissionTotals
+                            inner join(
+                                select 
+                                        submission_date,
+                                        MAX(total_submissions) AS max_submissions
+                                    FROM (
+                                        SELECT
+                                                submission_date,
+                                                hacker_id,
+                                                COUNT(*) AS total_submissions
+                                            FROM Submissions
+                                            GROUP BY submission_date, hacker_id
+                                    ) SubmissionTotals
+                                    GROUP BY submission_date
+                            ) MaxSubmissions USING (submission_date)
+                        WHERE total_submissions = max_submissions
+                        GROUP BY submission_date, hacker_id
+                ) TopHackers
+                GROUP BY submission_date
+        ) TopHackers USING (submission_date)
+        INNER JOIN Hackers USING (hacker_id)
+    ORDER BY submission_date
