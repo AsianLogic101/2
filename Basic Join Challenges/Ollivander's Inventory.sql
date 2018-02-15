@@ -8,4 +8,3 @@ join wands w1 on w1.coins_needed=t1.mp and w1.power=t1.power
 join wands_property wp on wp.age=t1.age and wp.code=w1.code
 where wp.is_evil=0
 order by w1.power desc, wp.age desc;
-
